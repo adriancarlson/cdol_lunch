@@ -1,8 +1,10 @@
+<script>
 $j(document).ready(function(){
     $j('a[href*="classcounts/home.html"]').closest('tr').after(
             `<tr>
-                <td><a href="/admin/classcounts/cdol_classcountsbydate.html">Lunch Counts - Date Range</a></td>\
+                <td><a href="classcounts/cdol_classcountsbydate.html">Lunch Counts - Date Range</a></td>\
                 <td>Lunch Count totals for a selected date range</td>
             </tr>`
         );
 });
+</script>
