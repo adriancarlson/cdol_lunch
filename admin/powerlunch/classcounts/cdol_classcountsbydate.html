@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PowerLunch Class Counts - Date Range</title>
+        ~[wc:commonscripts]
+        <link href="/images/css/screen.css" rel="stylesheet" media="screen">
+        <link href="/images/css/print.css" rel="stylesheet" media="print">
+        <link href="cdolstyles.css" rel="stylesheet">
+        ~[wc:pscb_init]
+    </head>
+
+    <body>
+        ~[wc:admin_header_frame_css]
+        <a href="/admin/home.html" target="_top">Start Page</a> &gt; <a
+            href="/admin/powerlunch/home.html">PowerLunch</a> &gt; PowerLunch Class Counts - Date Range
+
+        ~[wc:admin_navigation_frame_css]
+        <h1>PowerLunch Class Counts - Date Range</h1>
+        <form id="rptFilters" action="#" method="POST">
+            <div class="box-round hide-overflow">
+                <h2>Report Filters</h2>
+                <table class="linkDescList no-borders">
+                    <thead>
+                        <tr>
+                            <th class="w-100">Start Date</th>
+                            <th class="w-100">End Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td nowrap>
+                                <input title="sDate" name="sDate" id="sDate" class="psDateWidget" type="text"
+                                    value="~[if.~(gpv.sDate)=]~(f.currentdate;dateformat=MM/DD/YYYY)[else]~(gpv.sDate)[/if]"
+                                    size="10" />
+                            </td>
+                            <td nowrap>
+                                <input title="eDate" name="eDate" id="eDate" class="psDateWidget" type="text"
+                                    value="~[if.~(gpv.eDate)=]~(f.currentdate;dateformat=MM/DD/YYYY)[else]~(gpv.eDate)[/if]"
+                                    size="10" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="button-row fl">
+                    <input type="hidden" name="showData" value="1">
+                    <input type="hidden" name="attcodes" value="~(gpv.attcodes)">
+                    <span class="red">&nbsp;&nbsp;Select parameters and click submit</span>
+                    <input type="hidden" name="ac" value="prim">~[submitbutton]
+                </div>
+            </div>
+        </form>
+        ~[if#showData.~(gpv.showData)=1]
+        <div class="box-round">
+            <table class="tablesorter grid no-borders" id="results">
+                <thead>
+                    <tr class="headerrow">
+                        <th class="left">Date</th>
+                        <th class="center">Student Breakfast</th>
+                        <th class="center">Student Hot Lunch</th>
+                        <th class="center">Student A La Carte</th>
+                        <th class="center">Adult Breakfast</th>
+                        <th class="center">Adult Lunch</th>
+                        <th class="center">Adult A La Carte</th>
+                        <th class="center">Milk</th>
+                        <th class="center">Other 1</th>
+                        <th class="center">Other 2</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ~[tlist_sql;
+                    SELECT *
+                    FROM
+                    (
+                    SELECT
+                    lunch_type,
+                    TO_NUMBER(VALUE) AS lunch_count,
+                    date_value
+                    FROM
+                    (
+                    SELECT
+                    date_value,
+                    NAME,
+                    SUBSTR(NAME, INSTR(NAME, '.') + 1) AS section,
+                    SUBSTR(SUBSTR(NAME, INSTR(NAME, '.') - 1), 1, 1) AS lunch_type,
+                    VALUE
+                    FROM
+                    VS
+                    WHERE
+                    date_value BETWEEN to_date('~(gpv.sDate)', 'MM/DD/YYYY') AND to_date('~(gpv.eDate)',
+                    'MM/DD/YYYY')
+                    AND SUBSTR(NAME, INSTR(NAME, '.') + 1) IN (
+                    SELECT
+                    id
+                    FROM
+                    sections
+                    WHERE
+                    schoolid = '~(curschoolid)'
+                    )
+                    )
+                    ) PIVOT(
+                    SUM(lunch_count) FOR lunch_type IN (
+                    5 student_breakfast,
+                    1 student_lunch,
+                    6 student_a_la_carte,
+                    7 adult_breakfast,
+                    8 adult_lunch,
+                    9 adult_a_la_carte,
+                    2 milk,
+                    3 other_1,
+                    4 other_2
+                    )
+                    )
+                    ORDER BY
+                    date_value
+                    ;alternatecolor;nonemessage=
+                    <tr nodata>
+                        <td colspan="100%">No Records Found.</td>
+                    </tr>]
+                    <tr class="Record">
+                        <td class="left">~(date;d)</td>
+                        <td class="center">~(sbreakfast;t)</td>
+                        <td class="center">~(slunch;t)</td>
+                        <td class="center">~(salacart;t)</td>
+                        <td class="center">~(abreakfast;t)</td>
+                        <td class="center">~(alunch;t)</td>
+                        <td class="center">~(aalacart;t)</td>
+                        <td class="center">~(milk;t)</td>
+                        <td class="center">~(other1;t)</td>
+                        <td class="center">~(other2;t)</td>
+                    </tr>
+                    [/tlist_sql]
+                </tbody>
+            </table>
+        </div>
+        <p class="tc">Report generated at ~[time] on ~[date]</p>
+        [/if#showData]
+        ~[wc:admin_footer_frame_css]
+    </body>
+
+</html>

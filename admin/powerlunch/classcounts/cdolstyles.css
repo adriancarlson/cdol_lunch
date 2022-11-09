@@ -1,0 +1,28 @@
+.hide-overflow {
+	overflow: hidden;
+}
+
+.no-borders {
+	border: 0;
+}
+
+.no-borders td {
+	padding: 10px;
+}
+
+.no-borders table {
+	border-spacing: 10px;
+	border-collapse: separate;
+}
+
+.w-100 {
+	width: 100px;
+}
+
+.fl {
+	float: left;
+}
+
+.tc {
+	text-align: center;
+}
