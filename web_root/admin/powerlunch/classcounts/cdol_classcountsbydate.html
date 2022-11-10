@@ -26,8 +26,8 @@
                 <table class="linkDescList no-borders">
                     <thead>
                         <tr>
-                            <th class="w-100">Start Date</th>
-                            <th class="w-100">End Date</th>
+                            <th class="w-175">Start Date</th>
+                            <th>End Date</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -58,16 +58,16 @@
             <table class="tablesorter grid no-borders" id="results">
                 <thead>
                     <tr class="headerrow">
-                        <th class="left">Date</th>
-                        <th class="center">Student Breakfast</th>
-                        <th class="center">Student Hot Lunch</th>
-                        <th class="center">Student A La Carte</th>
-                        <th class="center">Adult Breakfast</th>
-                        <th class="center">Adult Lunch</th>
-                        <th class="center">Adult A La Carte</th>
-                        <th class="center">Milk</th>
-                        <th class="center">Other 1</th>
-                        <th class="center">Other 2</th>
+                        <th id="blank" class="right filter-select">Date</th>
+                        <th id="input_5" class="center">Student Breakfast</th>
+                        <th id="input_1" class="center">Student Hot Lunch</th>
+                        <th id="input_6" class="center">Student A La Carte</th>
+                        <th id="input_7" class="center">Adult Breakfast</th>
+                        <th id="input_8" class="center">Adult Lunch</th>
+                        <th id="input_9" class="center">Adult A La Carte</th>
+                        <th id="input_2" class="center">Milk</th>
+                        <th id="input_3" class="center">Other 1</th>
+                        <th id="input_4" class="center">Other 2</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -121,7 +121,7 @@
                         <td colspan="100%">No Records Found.</td>
                     </tr>]
                     <tr class="Record">
-                        <td class="left">~(date;d)</td>
+                        <td class="right">~(date;d)</td>
                         <td class="center">~(sbreakfast;t)</td>
                         <td class="center">~(slunch;t)</td>
                         <td class="center">~(salacart;t)</td>
@@ -139,6 +139,39 @@
         <p class="tc">Report generated at ~[time] on ~[date]</p>
         [/if#showData]
         ~[wc:admin_footer_frame_css]
+        <script>
+            $j(function () {
+                //cretae array to hold classcount input number and custom labels from the prefs table
+                let labelsArray = [];
+                //get values from the prefs table for the current school
+                ~[tlist_sql;
+                    SELECT
+                        to_number(substr(name, 31, 1)), 
+                        value 
+                    FROM 
+                        prefs 
+                    WHERE 
+                        prefs.name LIKE 'lunchcount_custom_label_input%'
+                        AND 
+                            substr(name, 34, length(name) - 33) = '~(curschoolid)'
+                        AND 
+                            prefs.value IS NOT null
+                    ;]
+                    //put values in the array
+                    labelsArray.push({ inputNumber: ~(1), label: "~(2)" },);
+                [/tlist_sql]
+                //add final element of array since tlist has comma separator at the end
+                labelsArray.push({});
+                //remove final comma and final element
+                labelsArray.pop();
+
+                for (let index = 0; index < labelsArray.length; ++index) {
+                    const element = labelsArray[index];
+                    // ...use `element`...
+                    $j('#input_' + element.inputNumber).html(element.label);
+                }
+            });
+        </script>
     </body>
 
 </html>

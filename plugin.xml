@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://plugin.powerschool.pearson.com plugin.xsd"
     description="CDOL Lunch Customizations" 
     name="CDOL Lunch" 
-    version="22.11.1">
+    version="22.11.2">
     <publisher name="Adrian Carlson">
         <contact email="adrian-carlson@cdolinc.net"/>
     </publisher>
