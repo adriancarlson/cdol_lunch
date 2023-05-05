@@ -9,8 +9,8 @@
         ~[wc:commonscripts]
         <link href="/images/css/screen.css" rel="stylesheet" media="screen">
         <link href="/images/css/print.css" rel="stylesheet" media="print">
-        <link href="cdolstyles.css" rel="stylesheet">
-        ~[wc:pscb_init]
+        <!-- <link href="cdolstyles.css" rel="stylesheet"> -->
+        ~[wc:pscbdevpro_init]
     </head>
 
     <body>
@@ -26,38 +26,41 @@
                 <table class="linkDescList no-borders">
                     <thead>
                         <tr>
-                            <th class="w-175">Start Date</th>
+                            <th align="left" width="180px">Start Date</th>
                             <th>End Date</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td nowrap>
+                            <td>
                                 <input title="sDate" name="sDate" id="sDate" class="psDateWidget" type="text"
                                     value="~[if.~(gpv.sDate)=]~(f.currentdate;dateformat=MM/DD/YYYY)[else]~(gpv.sDate)[/if]"
-                                    size="10" />
+                                    size="11" />
                             </td>
-                            <td nowrap>
+                            <td>
                                 <input title="eDate" name="eDate" id="eDate" class="psDateWidget" type="text"
                                     value="~[if.~(gpv.eDate)=]~(f.currentdate;dateformat=MM/DD/YYYY)[else]~(gpv.eDate)[/if]"
-                                    size="10" />
+                                    size="11" />
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <div class="button-row fl">
+                    <span class="red">&nbsp;&nbsp;Select parameters and click submit</span>
                     <input type="hidden" name="showData" value="1">
                     <input type="hidden" name="attcodes" value="~(gpv.attcodes)">
-                    <span class="red">&nbsp;&nbsp;Select parameters and click submit</span>
                     <input type="hidden" name="ac" value="prim">~[submitbutton]
                 </div>
             </div>
         </form>
         ~[if#showData.~(gpv.showData)=1]
         <div class="box-round">
-            <table class="tablesorter grid no-borders" id="results">
+            <h2 class="pscbdevBkgColor">&nbsp;&nbsp;PowerLunch Class Counts
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbspDate: ~(gpv.sdate) -
+                ~(gpv.edate)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><label id="lblRecordCount"></label></span></h2>
+            <table class="tablesorter grid no-borders" id="pscbDevPro">
                 <thead>
-                    <tr class="headerrow">
+                    <tr>
                         <th id="blank" class="right filter-select">Date</th>
                         <th id="input_5" class="center">Student Breakfast</th>
                         <th id="input_1" class="center">Student Hot Lunch</th>
@@ -140,25 +143,25 @@
         [/if#showData]
         ~[wc:admin_footer_frame_css]
         <script>
-            $j(function () {
-                //cretae array to hold classcount input number and custom labels from the prefs table
+            $j(() => {
+                //create array to hold classcount input number and custom labels from the prefs table
                 let labelsArray = [];
                 //get values from the prefs table for the current school
                 ~[tlist_sql;
-                    SELECT
-                        to_number(substr(name, 31, 1)), 
-                        value 
-                    FROM 
-                        prefs 
-                    WHERE 
-                        prefs.name LIKE 'lunchcount_custom_label_input%'
-                        AND 
-                            substr(name, 34, length(name) - 33) = '~(curschoolid)'
-                        AND 
-                            prefs.value IS NOT null
+                SELECT
+                to_number(substr(name, 31, 1)),
+                    value
+                FROM
+                prefs
+                WHERE
+                prefs.name LIKE 'lunchcount_custom_label_input%'
+                AND
+                substr(name, 34, length(name) - 33) = '~(curschoolid)'
+                AND
+                prefs.value IS NOT null
                     ;]
-                    //put values in the array
-                    labelsArray.push({ inputNumber: ~(1), label: "~(2)" },);
+                //put values in the array
+                labelsArray.push({ inputNumber: ~(1), label: "~(2)" },);
                 [/tlist_sql]
                 //add final element of array since tlist has comma separator at the end
                 labelsArray.push({});
